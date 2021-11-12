@@ -72,7 +72,7 @@ public class CognitoUserService {
         createUserResult.addProperty("statusCode", signupResponse.sdkHttpResponse().statusCode());
         createUserResult.addProperty("cognitoUserId", signupResponse.userSub());
         createUserResult.addProperty("isConfirmed", signupResponse.userConfirmed());
-        
+
         return createUserResult;
     }
 
