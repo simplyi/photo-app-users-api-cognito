@@ -25,6 +25,6 @@ public class Utils {
                 //.withEncryptionContext(encryptionContext);
 
         ByteBuffer plainTextKey = client.decrypt(request).getPlaintext();
-        return new String(plainTextKey.array(), Charset.forName("UTF-8"));
+        return new String(plainTextKey.array(), Charset.forName("UTF-8")).trim();
     }
 }
