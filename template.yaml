@@ -9,35 +9,44 @@ Description: >
 Globals:
   Function:
     Timeout: 20
-
+    Runtime: java11
+    Architectures:
+      - x86_64
+    MemorySize: 512
+    Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+      Variables:
+        MY_COGNITO_POOL_APP_CLIENT_ID: AQICAHj4Nk+3ytzEfp2bqRpZx1r2AqEfrN0ilwcHJNPIL85pmwGCH54USbu6OKPI0kpUyfcIAAAAeTB3BgkqhkiG9w0BBwagajBoAgEAMGMGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMVDnvRhva7XZvZ5tsAgEQgDYUkbB/zOs5SUYdc7Spm4ED80+Nrx6jOBvxCypYGWayrVyxkwVMsYERaQfNGVu7nl56mtROdF0=
+        MY_COGNITO_POOL_APP_CLIENT_SECRET: AQICAHj4Nk+3ytzEfp2bqRpZx1r2AqEfrN0ilwcHJNPIL85pmwFQ/FTytliSMBttyX2DTUYAAAAAlTCBkgYJKoZIhvcNAQcGoIGEMIGBAgEAMHwGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMSp6wJt9W4J3DHbKZAgEQgE8rPiAfeswKy3ac5DF6oCM4VTS2aIl6T+JNqMu0YXgmWOspyWQlGjnNOYEsTHW17CLZxNs7VFrReI50PNfefdSoOIKPvq33JK2B1QjuZcYz
 Resources:
   CreateUserHandlerFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: PhotoAppUsersAPICognito
       Handler: com.appsdeveloperblog.aws.lambda.CreateUserHandler::handleRequest
-      Runtime: java11
-      Architectures:
-        - x86_64
-      MemorySize: 512
-      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
-        Variables:
-          MY_COGNITO_POOL_APP_CLIENT_ID: 3uvp06ro8r6c0jb3gttchcgg9s
-          MY_COGNITO_POOL_APP_CLIENT_SECRET: uniq2lvud48b6msep304v0vroqgoo4u4a0n3l4mb3psd011mfcd
       Events:
         CreateUser:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /users
             Method: post
-
+  ConfirmUserHandlerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: PhotoAppUsersAPICognito
+      Handler: com.appsdeveloperblog.aws.lambda.ConfirmUserHandler::handleRequest
+      Events:
+        ConfirmUser:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /confirm
+            Method: post
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   CreateUserApi:
     Description: "API Gateway endpoint URL for Prod stage for CreateUserHandler Function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/users"
   CreateUserHandlerFunction:
     Description: "CreateUserHandler Lambda Function ARN"
     Value: !GetAtt CreateUserHandlerFunction.Arn
