@@ -10,6 +10,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.appsdeveloperblog.aws.lambda.service.CognitoUserService;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -46,10 +47,18 @@ public class CreateUserHandler implements RequestHandler<APIGatewayProxyRequestE
             JsonObject createUserResult = cognitoUserService.createUser(userDetails, appClientId, appClientSecret);
             response.withStatusCode(200);
             response.withBody(new Gson().toJson(createUserResult, JsonObject.class));
-        } catch(AwsServiceException ex) {
+        } catch (AwsServiceException ex) {
             logger.log(ex.awsErrorDetails().errorMessage());
+            ErrorResponse errorResponse = new ErrorResponse(ex.awsErrorDetails().errorMessage());
+            String errorResponseJsonString = new Gson().toJson(errorResponse, ErrorResponse.class);
+            response.withBody(errorResponseJsonString);
+            response.withStatusCode(ex.awsErrorDetails().sdkHttpResponse().statusCode());
+        } catch (Exception ex) {
+            logger.log(ex.getMessage());
+            ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+            String errorResponseJsonString = new GsonBuilder().serializeNulls().create().toJson(errorResponse, ErrorResponse.class);
+            response.withBody(errorResponseJsonString);
             response.withStatusCode(500);
-            response.withBody(ex.awsErrorDetails().errorMessage());
         }
 
         return response;
