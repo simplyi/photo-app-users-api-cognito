@@ -17,6 +17,7 @@ Globals:
       Variables:
         MY_COGNITO_POOL_APP_CLIENT_ID: AQICAHj4Nk+3ytzEfp2bqRpZx1r2AqEfrN0ilwcHJNPIL85pmwFiZPFsw328f73i0IvDdi63AAAAeTB3BgkqhkiG9w0BBwagajBoAgEAMGMGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMgV9XlvB9KuTM0oIZAgEQgDYXNHKjfpHXx0vwvF8J91aCj5oSaIj4XganC5SCWiofOsoX0Cg7h397NaVCVGxHO7YjOqhHPRU=
         MY_COGNITO_POOL_APP_CLIENT_SECRET: AQICAHj4Nk+3ytzEfp2bqRpZx1r2AqEfrN0ilwcHJNPIL85pmwFQ/FTytliSMBttyX2DTUYAAAAAlTCBkgYJKoZIhvcNAQcGoIGEMIGBAgEAMHwGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMSp6wJt9W4J3DHbKZAgEQgE8rPiAfeswKy3ac5DF6oCM4VTS2aIl6T+JNqMu0YXgmWOspyWQlGjnNOYEsTHW17CLZxNs7VFrReI50PNfefdSoOIKPvq33JK2B1QjuZcYz
+        MY_COGNITO_POOL_ID: AQICAHj4Nk+3ytzEfp2bqRpZx1r2AqEfrN0ilwcHJNPIL85pmwFNOjRzZkvN+98KCQSsrgb0AAAAcjBwBgkqhkiG9w0BBwagYzBhAgEAMFwGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMhoWLs/YHOpMiXP0DAgEQgC+Svb90pO1aiUP9lrfaZPNSazJPKg8Yx0WFf2TrYAwEkdc7h3JiCjtQHgH1lyO7YQ==
 Resources:
   CreateUserHandlerFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
