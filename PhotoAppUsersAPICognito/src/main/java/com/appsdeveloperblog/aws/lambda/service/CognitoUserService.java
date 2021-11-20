@@ -127,6 +127,22 @@ public class CognitoUserService {
 
     }
 
+    public JsonObject addUserToGroup(String groupName, String userName, String userPoolId) {
+        AdminAddUserToGroupRequest adminAddUserToGroupRequest = AdminAddUserToGroupRequest.builder()
+                .groupName(groupName)
+                .username(userName)
+                .userPoolId(userPoolId)
+                .build();
+
+        AdminAddUserToGroupResponse adminAddUserToGroupResponse =
+                cognitoIdentityProviderClient.adminAddUserToGroup(adminAddUserToGroupRequest);
+
+        JsonObject addUserToGroupResponse = new JsonObject();
+        addUserToGroupResponse.addProperty("isSuccessful", adminAddUserToGroupResponse.sdkHttpResponse().isSuccessful());
+        addUserToGroupResponse.addProperty("statusCode", adminAddUserToGroupResponse.sdkHttpResponse().statusCode());
+
+        return addUserToGroupResponse;
+    }
 
     public String calculateSecretHash(String userPoolClientId, String userPoolClientSecret, String userName) {
         final String HMAC_SHA256_ALGORITHM = "HmacSHA256";
