@@ -52,6 +52,24 @@ Resources:
           Properties:
             Path: /login
             Method: post
+  AddUserToGroupHandlerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: PhotoAppUsersAPICognito
+      Handler: com.appsdeveloperblog.aws.lambda.AddUserToGroupHandler::handleRequest
+      Policies:
+        - Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+          Action:
+            - 'cognito-idp:AdminAddUserToGroup'
+          Resource: "arn:aws:cognito-idp:us-east-1:211380148758:userpool/us-east-1_DvsQpmAia"
+      Events:
+        AddUserToGroup:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /users/{userName}/add-to-group
+            Method: post
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
