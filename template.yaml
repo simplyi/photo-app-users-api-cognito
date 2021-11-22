@@ -59,11 +59,11 @@ Resources:
       Handler: com.appsdeveloperblog.aws.lambda.AddUserToGroupHandler::handleRequest
       Policies:
         - Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-          Action:
-            - 'cognito-idp:AdminAddUserToGroup'
-          Resource: "arn:aws:cognito-idp:us-east-1:211380148758:userpool/us-east-1_DvsQpmAia"
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'cognito-idp:AdminAddUserToGroup'
+              Resource: "arn:aws:cognito-idp:us-east-1:211380148758:userpool/us-east-1_DvsQpmAia"
       Events:
         AddUserToGroup:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
