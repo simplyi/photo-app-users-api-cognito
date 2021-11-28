@@ -19,6 +19,15 @@ Globals:
         MY_COGNITO_POOL_APP_CLIENT_SECRET: AQICAHj4Nk+3ytzEfp2bqRpZx1r2AqEfrN0ilwcHJNPIL85pmwFQ/FTytliSMBttyX2DTUYAAAAAlTCBkgYJKoZIhvcNAQcGoIGEMIGBAgEAMHwGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMSp6wJt9W4J3DHbKZAgEQgE8rPiAfeswKy3ac5DF6oCM4VTS2aIl6T+JNqMu0YXgmWOspyWQlGjnNOYEsTHW17CLZxNs7VFrReI50PNfefdSoOIKPvq33JK2B1QjuZcYz
         MY_COGNITO_POOL_ID: AQICAHj4Nk+3ytzEfp2bqRpZx1r2AqEfrN0ilwcHJNPIL85pmwFNOjRzZkvN+98KCQSsrgb0AAAAcjBwBgkqhkiG9w0BBwagYzBhAgEAMFwGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMhoWLs/YHOpMiXP0DAgEQgC+Svb90pO1aiUP9lrfaZPNSazJPKg8Yx0WFf2TrYAwEkdc7h3JiCjtQHgH1lyO7YQ==
 Resources:
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: open-api.yaml
   CreateUserHandlerFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -30,6 +39,8 @@ Resources:
           Properties:
             Path: /users
             Method: post
+            RestApiId:
+              Ref: MyApi
   ConfirmUserHandlerFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -41,6 +52,8 @@ Resources:
           Properties:
             Path: /confirm
             Method: post
+            RestApiId:
+              Ref: MyApi
   LoginUserHandlerFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -52,6 +65,8 @@ Resources:
           Properties:
             Path: /login
             Method: post
+            RestApiId:
+              Ref: MyApi
   AddUserToGroupHandlerFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -70,13 +85,33 @@ Resources:
           Properties:
             Path: /users/{userName}/add-to-group
             Method: post
+            RestApiId:
+              Ref: MyApi
+  GetUserHandlerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: PhotoAppUsersAPICognito
+      Handler: com.appsdeveloperblog.aws.lambda.GetUserHandler::handleRequest
+      Events:
+        GetUser:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /users/me
+            Method: get
+            RestApiId:
+              Ref: MyApi
+  LambdaAuthorizerFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: PhotoAppUsersAPICognito
+      Handler: com.appsdeveloperblog.aws.lambda.authorizer.LambdaAuthorizer::handleRequest
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   CreateUserApi:
     Description: "API Gateway endpoint URL for Prod stage for CreateUserHandler Function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/users"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/users"
   CreateUserHandlerFunction:
     Description: "CreateUserHandler Lambda Function ARN"
     Value: !GetAtt CreateUserHandlerFunction.Arn
