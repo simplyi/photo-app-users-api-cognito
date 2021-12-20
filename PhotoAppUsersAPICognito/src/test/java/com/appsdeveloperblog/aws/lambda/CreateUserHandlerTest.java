@@ -6,4 +6,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class CreateUserHandlerTest {
 
+    @Test
+    public void testHandleRequest_whenValidDetailsProvided_returnsSuccessfulResponse() {
+        
+    }
 }
