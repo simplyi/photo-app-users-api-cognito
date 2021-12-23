@@ -8,6 +8,11 @@ public class CreateUserHandlerTest {
 
     @Test
     public void testHandleRequest_whenValidDetailsProvided_returnsSuccessfulResponse() {
-        
+        // Arrange or Given
+
+        // Act or When
+
+        // Assert or Then
+
     }
 }
