@@ -24,13 +24,22 @@ public class CreateUserHandler implements RequestHandler<APIGatewayProxyRequestE
     private final String appClientId;
     private final String appClientSecret;
 
+    public CreateUserHandler(CognitoUserService cognitoUserService,
+                             String appClientId,
+                             String appClientSecret) {
+        this.cognitoUserService = cognitoUserService;
+        this.appClientId = appClientId;
+        this.appClientSecret = appClientSecret;
+    }
+
     public CreateUserHandler() {
         this.cognitoUserService  = new CognitoUserService(System.getenv("AWS_REGION"));
         this.appClientId = Utils.decryptKey("MY_COGNITO_POOL_APP_CLIENT_ID");
         this.appClientSecret = Utils.decryptKey("MY_COGNITO_POOL_APP_CLIENT_SECRET");
     }
 
-    public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
+    public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input,
+                                                      final Context context) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
 
