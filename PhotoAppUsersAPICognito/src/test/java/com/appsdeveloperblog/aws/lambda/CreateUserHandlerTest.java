@@ -1,8 +1,11 @@
 package com.appsdeveloperblog.aws.lambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.appsdeveloperblog.aws.lambda.service.CognitoUserService;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CreateUserHandlerTest {
@@ -22,6 +26,9 @@ public class CreateUserHandlerTest {
 
     @Mock
     Context context;
+
+    @Mock
+    LambdaLogger lambdaLoggerMock;
 
     @InjectMocks
     CreateUserHandler handler;
@@ -49,10 +56,22 @@ public class CreateUserHandlerTest {
     @Test
     public void testHandleRequest_whenValidDetailsProvided_returnsSuccessfulResponse() {
         // Arrange or Given
+        JsonObject userDetails = new JsonObject();
+        userDetails.addProperty("firstName","Sergey");
+        userDetails.addProperty("lastName","Kargopolov");
+        userDetails.addProperty("email","sergey.kargopolov@gmail.com");
+        userDetails.addProperty("password","12345678");
+
+        String userDetailsJsonString = new Gson().toJson(userDetails, JsonObject.class);
+
+        when(apiGatewayProxyRequestEvent.getBody()).thenReturn(userDetailsJsonString);
+
+        when(context.getLogger()).thenReturn(lambdaLoggerMock);
 
         // Act or When
 
         // Assert or Then
+        verify(lambdaLoggerMock, times(1)).log(anyString());
 
     }
 }
