@@ -3,9 +3,11 @@ package com.appsdeveloperblog.aws.lambda;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
+import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.appsdeveloperblog.aws.lambda.service.CognitoUserService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -78,6 +80,9 @@ public class CreateUserHandlerTest {
         when(cognitoUserService.createUser(any(), any(), any())).thenReturn(createUserResult);
 
         // Act or When
+        APIGatewayProxyResponseEvent responseEvent =  handler.handleRequest(apiGatewayProxyRequestEvent, context);
+        String responseBody = responseEvent.getBody();
+        JsonObject responseBodyJson = JsonParser.parseString(responseBody).getAsJsonObject();
 
         // Assert or Then
         verify(lambdaLoggerMock, times(1)).log(anyString());
