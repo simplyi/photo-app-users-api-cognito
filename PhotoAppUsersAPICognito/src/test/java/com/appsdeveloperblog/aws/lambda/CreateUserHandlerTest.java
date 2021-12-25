@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 
@@ -67,6 +69,13 @@ public class CreateUserHandlerTest {
         when(apiGatewayProxyRequestEvent.getBody()).thenReturn(userDetailsJsonString);
 
         when(context.getLogger()).thenReturn(lambdaLoggerMock);
+
+        JsonObject createUserResult = new JsonObject();
+        createUserResult.addProperty("isSuccessful", true);
+        createUserResult.addProperty("statusCode", 200);
+        createUserResult.addProperty("cognitoUserId", UUID.randomUUID().toString());
+        createUserResult.addProperty("isConfirmed", false);
+        when(cognitoUserService.createUser(any(), any(), any())).thenReturn(createUserResult);
 
         // Act or When
 

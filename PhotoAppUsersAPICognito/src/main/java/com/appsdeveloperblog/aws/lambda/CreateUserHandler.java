@@ -53,7 +53,9 @@ public class CreateUserHandler implements RequestHandler<APIGatewayProxyRequestE
         JsonObject userDetails = JsonParser.parseString(requestBody).getAsJsonObject();
 
         try {
-            JsonObject createUserResult = cognitoUserService.createUser(userDetails, appClientId, appClientSecret);
+            JsonObject createUserResult = cognitoUserService.createUser(userDetails,
+                    appClientId,
+                    appClientSecret);
             response.withStatusCode(200);
             response.withBody(new Gson().toJson(createUserResult, JsonObject.class));
         } catch (AwsServiceException ex) {
