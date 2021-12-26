@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -86,6 +86,13 @@ public class CreateUserHandlerTest {
 
         // Assert or Then
         verify(lambdaLoggerMock, times(1)).log(anyString());
+        assertTrue(responseBodyJson.get("isSuccessful").getAsBoolean());
+        assertEquals(200, responseBodyJson.get("statusCode").getAsInt());
+        assertNotNull(responseBodyJson.get("cognitoUserId").getAsString());
+        assertEquals(200, responseEvent.getStatusCode(), "Successful HTTP Response should have HTTP status code 200");
+        assertFalse(createUserResult.get("isConfirmed").getAsBoolean());
+        verify(cognitoUserService, times(1)).createUser(any(), any(), any());
+
 
     }
 }
