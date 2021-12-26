@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.appsdeveloperblog.aws.lambda.service.CognitoUserService;
+import com.appsdeveloperblog.aws.lambda.shared.Constants;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -73,10 +74,10 @@ public class CreateUserHandlerTest {
         when(context.getLogger()).thenReturn(lambdaLoggerMock);
 
         JsonObject createUserResult = new JsonObject();
-        createUserResult.addProperty("isSuccessful", true);
-        createUserResult.addProperty("statusCode", 200);
-        createUserResult.addProperty("cognitoUserId", UUID.randomUUID().toString());
-        createUserResult.addProperty("isConfirmed", false);
+        createUserResult.addProperty(Constants.IS_SUCCESSFUL, true);
+        createUserResult.addProperty(Constants.STATUS_CODE, 200);
+        createUserResult.addProperty(Constants.COGNITO_USER_ID, UUID.randomUUID().toString());
+        createUserResult.addProperty(Constants.IS_CONFIRMED, false);
         when(cognitoUserService.createUser(any(), any(), any())).thenReturn(createUserResult);
 
         // Act or When
@@ -86,11 +87,11 @@ public class CreateUserHandlerTest {
 
         // Assert or Then
         verify(lambdaLoggerMock, times(1)).log(anyString());
-        assertTrue(responseBodyJson.get("isSuccessful").getAsBoolean());
-        assertEquals(200, responseBodyJson.get("statusCode").getAsInt());
-        assertNotNull(responseBodyJson.get("cognitoUserId").getAsString());
+        assertTrue(responseBodyJson.get(Constants.IS_SUCCESSFUL).getAsBoolean());
+        assertEquals(200, responseBodyJson.get(Constants.STATUS_CODE).getAsInt());
+        assertNotNull(responseBodyJson.get(Constants.COGNITO_USER_ID).getAsString());
         assertEquals(200, responseEvent.getStatusCode(), "Successful HTTP Response should have HTTP status code 200");
-        assertFalse(createUserResult.get("isConfirmed").getAsBoolean());
+        assertFalse(createUserResult.get(Constants.IS_CONFIRMED).getAsBoolean());
         verify(cognitoUserService, times(1)).createUser(any(), any(), any());
 
 
