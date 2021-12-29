@@ -40,6 +40,8 @@ public class CreateUserHandlerTest {
 
     @BeforeEach
     public void runBeforeEachTestMethod() {
+        when(context.getLogger()).thenReturn(lambdaLoggerMock);
+
         System.out.println("Executing @BeforeEach method");
     }
 
@@ -71,7 +73,7 @@ public class CreateUserHandlerTest {
 
         when(apiGatewayProxyRequestEvent.getBody()).thenReturn(userDetailsJsonString);
 
-        when(context.getLogger()).thenReturn(lambdaLoggerMock);
+        //when(context.getLogger()).thenReturn(lambdaLoggerMock);
 
         JsonObject createUserResult = new JsonObject();
         createUserResult.addProperty(Constants.IS_SUCCESSFUL, true);
@@ -95,5 +97,22 @@ public class CreateUserHandlerTest {
         verify(cognitoUserService, times(1)).createUser(any(), any(), any());
 
 
+    }
+
+    @Test
+    public void testHandleRequest_whenEmptyRequestBodyProvided_returnsErrorMessage() {
+        // Arrange
+        when(apiGatewayProxyRequestEvent.getBody()).thenReturn("");
+        //when(context.getLogger()).thenReturn(lambdaLoggerMock);
+
+        // Act
+        APIGatewayProxyResponseEvent responseEvent =  handler.handleRequest(apiGatewayProxyRequestEvent, context);
+        String responseBody = responseEvent.getBody();
+        JsonObject responseBodyJson = JsonParser.parseString(responseBody).getAsJsonObject();
+
+        // Assert
+        assertEquals(500, responseEvent.getStatusCode());
+        assertNotNull(responseBodyJson.get("message"), "Missing the 'message' property in JSON response.");
+        assertFalse(responseBodyJson.get("message").getAsString().isEmpty(), "Error message should not be empty");
     }
 }

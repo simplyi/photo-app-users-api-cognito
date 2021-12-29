@@ -50,9 +50,10 @@ public class CreateUserHandler implements RequestHandler<APIGatewayProxyRequestE
         LambdaLogger logger  = context.getLogger();
         logger.log("Original json body: " +  requestBody);
 
-        JsonObject userDetails = JsonParser.parseString(requestBody).getAsJsonObject();
+        JsonObject userDetails = null;
 
         try {
+            userDetails = JsonParser.parseString(requestBody).getAsJsonObject();
             JsonObject createUserResult = cognitoUserService.createUser(userDetails,
                     appClientId,
                     appClientSecret);
