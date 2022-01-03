@@ -14,6 +14,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.http.SdkHttpResponse;
 
 import java.util.UUID;
 
@@ -114,5 +117,33 @@ public class CreateUserHandlerTest {
         assertEquals(500, responseEvent.getStatusCode());
         assertNotNull(responseBodyJson.get("message"), "Missing the 'message' property in JSON response.");
         assertFalse(responseBodyJson.get("message").getAsString().isEmpty(), "Error message should not be empty");
+    }
+
+    @Test
+    public void testHandleRequest_whenAwsServiceExceptionTakesPlace_returnsErrorMessage() {
+        // Arrange
+        when(apiGatewayProxyRequestEvent.getBody()).thenReturn("{}");
+
+        AwsErrorDetails awsErrorDetails = AwsErrorDetails.builder()
+                .errorCode("")
+                .sdkHttpResponse(SdkHttpResponse.builder().statusCode(500).build())
+                .errorMessage("AwsServiceException took place")
+                .build();
+        when(cognitoUserService.createUser(any(), any(), any())).thenThrow(
+                AwsServiceException.builder()
+                        .statusCode(500)
+                        .awsErrorDetails(awsErrorDetails)
+                        .build());
+
+        // Act
+        APIGatewayProxyResponseEvent responseEvent =  handler.handleRequest(apiGatewayProxyRequestEvent, context);
+        String responseBody = responseEvent.getBody();
+        JsonObject responseBodyJson = JsonParser.parseString(responseBody).getAsJsonObject();
+
+        // Assert
+        assertEquals(awsErrorDetails.sdkHttpResponse().statusCode(), responseEvent.getStatusCode());
+        assertNotNull(responseBodyJson.get("message"));
+        assertEquals(awsErrorDetails.errorMessage(), responseBodyJson.get("message").getAsString());
+
     }
 }
